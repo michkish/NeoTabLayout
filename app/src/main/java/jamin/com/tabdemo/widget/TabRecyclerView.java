@@ -24,6 +24,9 @@ public class TabRecyclerView extends RecyclerView {
 
     protected BaseRecyclePagerAdapter.OnItemCountChangedListener onItemCountChangedListener;
 
+    protected LinearLayoutManager linearLayoutManager;
+    protected GridLayoutManager gridLayoutManager;
+
     //当item数量超过这个值得时候模式切换为SCROLL
     protected int thresholdValue = Integer.MAX_VALUE;
 
@@ -79,22 +82,34 @@ public class TabRecyclerView extends RecyclerView {
         if (getAdapter() != null && thresholdValue < Integer.MAX_VALUE) {
             if (getAdapter().getItemCount() > thresholdValue) {
                 this.arrayMode = SCROLL;
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                if (linearLayoutManager == null) {
+                    linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                }
                 setLayoutManager(linearLayoutManager);
             } else {
                 this.arrayMode = FIXED;
                 int itemCount = getAdapter() == null ? 1 : getAdapter().getItemCount();
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(context, itemCount, GridLayoutManager.VERTICAL, false);
+                if (gridLayoutManager == null) {
+                    gridLayoutManager = new GridLayoutManager(context, itemCount, GridLayoutManager.VERTICAL, false);
+                } else {
+                    gridLayoutManager.setSpanCount(itemCount);
+                }
                 setLayoutManager(gridLayoutManager);
             }
         } else {
             this.arrayMode = arrayMode;
             if (arrayMode == SCROLL) {
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                if (linearLayoutManager == null) {
+                    linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                }
                 setLayoutManager(linearLayoutManager);
             } else {
                 int itemCount = getAdapter() == null ? 1 : getAdapter().getItemCount();
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(context, itemCount, GridLayoutManager.VERTICAL, false);
+                if (gridLayoutManager == null) {
+                    gridLayoutManager = new GridLayoutManager(context, itemCount, GridLayoutManager.VERTICAL, false);
+                } else {
+                    gridLayoutManager.setSpanCount(itemCount);
+                }
                 setLayoutManager(gridLayoutManager);
             }
         }
@@ -116,6 +131,14 @@ public class TabRecyclerView extends RecyclerView {
             }
         }
         super.setLayoutManager(layout);
+        if (arrayMode == SCROLL) {
+            int first = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+            int last = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+            if (last - first + 1 < linearLayoutManager.getChildCount()) {
+            } else {
+
+            }
+        }
     }
 
     @Override
@@ -153,7 +176,6 @@ public class TabRecyclerView extends RecyclerView {
             setArrayMode(FIXED);
         } else {
             if (arrayMode == FIXED && getLayoutManager() != null) {
-                GridLayoutManager gridLayoutManager = (GridLayoutManager) getLayoutManager();
                 gridLayoutManager.setSpanCount(itemCount > 0 ? itemCount : 1);
             }
         }
