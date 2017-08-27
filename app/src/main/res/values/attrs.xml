@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="arrayMode">
+        <enum name="fixed" value="0x01"/>
+        <enum name="scroll" value="0x02"/>
+    </attr>
+
+    <declare-styleable name="NeoTabLayout">
+        <attr name="indicatorSelectBackground" format="reference"/>
+        <attr name="arrayMode"/>
+    </declare-styleable>
+
+    <declare-styleable name="TabRecyclerView">
+        <attr name="arrayMode"/>
+        <attr name="thresholdValue" format="integer"/>
+    </declare-styleable>
+</resources>
